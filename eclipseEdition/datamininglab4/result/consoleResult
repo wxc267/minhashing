@@ -1,0 +1,6 @@
+Time for construct classifier for KNN(Offline cost):0.172 s.
+Time for classify the label for test data for KNN(Online Cost):49.603s.
+Accuracy of KNN method:60.11267536784478%
+Time for construct classifier for decision tree(Offline cost):22.688 s.
+Time for classify the label for test data for decision tree(Online Cost):23.277s.
+Accuracy of Decision Tree method:61.01823336755147%
