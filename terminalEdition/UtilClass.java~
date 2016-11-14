@@ -152,33 +152,29 @@ public class UtilClass {
 	}
 	///////////////////////////////////////////////Boolean Matrics///////////////////////////////////
 	/**
-	 * convert shingles into boolean matrics.
+	 * convert shingles into boolean matrics with the index.
 	 * @param shingles
 	 * 			the set of 3-word shingles for all documents.
 	 * @param universe
 	 * 			the set of universal shingle sets
 	 * .
 	 * @return
-	 * 				boolean matrics
+	 * 				boolean matrics with the ture index
 	 */
-	public static List<List<Boolean>> getBooleanMatrics(List<Set<String>> shingles,Set<String> universe)
+	public static List<List<Integer>> getBooleanMatrics(List<Set<String>> shingles,Set<String> universe)
 	{
-		 List<List<Boolean>> matrics=new ArrayList<List<Boolean>>();
+		 List<List<Integer>> matrics=new ArrayList<List<Integer>>();
 		 List<String> universalShingle=new ArrayList<String>(universe);
 		 for(int i=0; i<shingles.size();i++)
 		 {
-			 List<Boolean> matrix=new ArrayList<Boolean>();
+			 List<Integer> matrix=new ArrayList<Integer>();
 			 Set<String> set=shingles.get(i);
 			 for(int j=0;j<universalShingle.size();j++)
 			 {
 				 String word=universalShingle.get(j);
 				 if(set.contains(word))
 				 {
-					 matrix.add(true);
-				 }
-				 else
-				 {
-					 matrix.add(false);
+					 matrix.add(j);
 				 }
 			 }
 			 matrics.add(matrix);

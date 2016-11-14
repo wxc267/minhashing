@@ -3,8 +3,17 @@ package datamininglab4;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Random;
+/**
+ * this min hashing is with trick.
+ * @author hl267
+ *
+ */
 public class MinHashing {
+/**
+ *  the number of row
+ */
+	private int row;
 	/**
 	 * the number of random permutation
 	 */
@@ -12,38 +21,40 @@ public class MinHashing {
 	/**
 	 * boolean matrics
 	 */
-	private List<List<Boolean>> booleanMatrics;
+	private List<List<Integer>> booleanMatrics;
 	/**
-	 * random permutaion
+	 * hash function
 	 */
-	private List<List<Integer>> randomPermutation;
+	private List<List<Integer>> hashFunction;
 	/**
 	 * create min hashing function.
 	 * @param k
 	 * 					the number of random permutation
 	 * @param booleanMatrics
 	 * 					boolean Matrics
+	 * @param row
+	 * 				the number of rows;
 	 */
-	public MinHashing(int k,List<List<Boolean>> booleanMatrics)
+	public MinHashing(int k,List<List<Integer>> booleanMatrics,int row)
 	{
 		this.k=k;
+		hashFunction=new ArrayList<List<Integer>>();
 		this.booleanMatrics=booleanMatrics;
-		 randomPermutation=new ArrayList<List<Integer>>();
-		getRandomPermutationList();
+		this.row=row;
+		generateHashFunction();
 	}
-	private void getRandomPermutationList()
+	private void generateHashFunction()
 	{
-		List<Integer> origin=new ArrayList<Integer>();
-		int size=booleanMatrics.get(0).size();//get the number of the rows
-		for(int i=0;i<size;i++)
-		{
-			origin.add(i);
-		}
 		for(int i=0;i<k;i++)
 		{
-			List<Integer> permutation=new ArrayList<Integer>(origin);
-			Collections.shuffle(permutation);
-			randomPermutation.add(permutation);
+			List<Integer> random=new ArrayList<Integer>();
+			Random rand1=new Random();
+			int a=rand1.nextInt(row)+1;
+			Random rand2=new Random();
+			int b = rand2.nextInt(row)+2;
+			random.add(a);
+			random.add(b);
+			hashFunction.add(random);
 		}
 	}
 	/**
@@ -57,25 +68,28 @@ public class MinHashing {
 		List<List<Integer>> result=new ArrayList<List<Integer>>();
 		for(int i=0;i<booleanMatrics.size();i++)
 		{
+			List<Integer> indices=booleanMatrics.get(i);
 			List<Integer> signature=new ArrayList<Integer>();
-			List<Boolean> matrix=booleanMatrics.get(i);
-			for(int j=0;j<randomPermutation.size();j++)
+			for(int j=0;j<k;j++)
 			{
-				List<Integer> permutation=randomPermutation.get(j);
-				int min_index=permutation.size();
-				for(int k=0;k<permutation.size();k++)
+				List<Integer> hash=hashFunction.get(j);
+				int a=hash.get(0);
+				int b=hash.get(1);
+				int min=row;
+				for(int l=0;l<indices.size();l++)
 				{
-					int index=permutation.get(k);
-					if(matrix.get(index)&&index<min_index)
+					int index=indices.get(l);
+					int value=(a*index+b) % row;
+					if(value<min)
 					{
-						min_index=permutation.get(index);
-					}
-					if(min_index==1)
-					{
-						break;
+						min=value;
+						if(min==0)
+						{
+							break;
+						}
 					}
 				}
-				signature.add(min_index);
+				signature.add(min);
 			}
 			result.add(signature);
 		}

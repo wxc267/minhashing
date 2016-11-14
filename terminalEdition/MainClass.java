@@ -16,7 +16,7 @@ public class MainClass {
 	 */
 	private static final int[] K={16,32,64,128,256};
 
-	public static void main(String[] args) throws IOException
+	public static void main(String[] args) throws IOException, InterruptedException
 	{
 		//parsing
 		List<ReuterDoc> reuterList=new ArrayList<ReuterDoc>();
@@ -30,25 +30,33 @@ public class MainClass {
 		}
 		//transfer the body to shingling
 		System.out.println("shingling....");
-		long base_start=System.currentTimeMillis();
+
 		List<Set<String>> shingleSet=UtilClass.generateGramList(reuterList,N);
 		Set<String> universalSet=UtilClass.getUniverseGramSet(shingleSet);
+		long base_start=System.currentTimeMillis();
 		List<List<Double>> baseLine=UtilClass.getBaseLineSimilarity(shingleSet);
 		long base_end=System.currentTimeMillis();
 		double base_time=(base_end-base_start)*1.0/1000;
-		System.out.println("The time of building up base line is "+base_time+"s.");
+		System.out.println("The time of building up base line("
+				+ "checking the time of similarity in raw feature vectors) is "+base_time+"s.");
 		//min hashing and calculate its quality.
 		System.out.println("Hashing.....");
-		List<List<Boolean>> booleanMatrics= UtilClass.getBooleanMatrics(shingleSet, universalSet);
+		List<List<Integer>> booleanMatrics= UtilClass.getBooleanMatrics(shingleSet, universalSet);
+		int sizeOfUniversal=universalSet.size();
+		universalSet=null;
+		shingleSet=null;
+		reuterList=null;
+		
 		for(int i=0;i<K.length;i++){
 			long start=System.currentTimeMillis();
-			MinHashing min=new MinHashing(K[i],booleanMatrics);
+			MinHashing min=new MinHashing(K[i],booleanMatrics,sizeOfUniversal);
 			List<List<Integer>> signatureMatrix=min.generateSignatureMatrix();
 			List<List<Double>> minHashing=UtilClass.getMinHashingSimilarity(signatureMatrix);	
 			long end=System.currentTimeMillis();
 			double result=UtilClass.calculateMSE(baseLine, minHashing);
 			double time=(end-start)*1.0/1000;
-			System.out.println("When k is " + K[i]+ ", the mean sqaure error is : "+result+", and it spends "+time+"s.");
+			System.out.println("When k is " + K[i]+ ", the mean sqaure error is : "+result+", and it costs "
+					+time+"s.");
 		}
 	}
 
